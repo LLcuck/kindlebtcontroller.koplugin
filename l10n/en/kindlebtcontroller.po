@@ -13,6 +13,9 @@ msgstr "Bluetooth Controller"
 msgid "蓝牙开关"
 msgstr "Bluetooth Toggle"
 
+msgid "睡眠/唤醒自动开关蓝牙"
+msgstr "Auto Toggle Bluetooth on Sleep/Wake"
+
 msgid "当前设备：蓝牙已关闭"
 msgstr "Current Device: Bluetooth Off"
 

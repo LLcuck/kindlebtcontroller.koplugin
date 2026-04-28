@@ -713,7 +713,9 @@ end
 --  蓝牙硬件状态控制
 -- =======================================================
 
-function BluetoothController:setBluetoothState(enable)
+function BluetoothController:setBluetoothState(enable, show_message)
+    if show_message == nil then show_message = true end
+
     local flight_mode_value = enable and 0 or 1
     local expected_state = enable and 1 or 0
 
@@ -739,8 +741,47 @@ function BluetoothController:setBluetoothState(enable)
     end
 
     self.target_state = actual_state > 0
-    UIManager:show(InfoMessage:new{ text = msg, timeout = 2 })
+    if show_message then
+        UIManager:show(InfoMessage:new{ text = msg, timeout = 2 })
+    end
     return success
+end
+
+function BluetoothController:isAutoBluetoothSleepToggleEnabled()
+    return self.config.auto_toggle_bluetooth_on_sleep == true
+end
+
+function BluetoothController:setAutoBluetoothSleepToggle(enabled)
+    self.config.auto_toggle_bluetooth_on_sleep = enabled == true
+    self:saveSettings()
+end
+
+function BluetoothController:onSuspend()
+    if not self:isAutoBluetoothSleepToggleEnabled() or not _G.KOBluetoothStateManager then
+        return
+    end
+
+    local was_on = _G.KOBluetoothStateManager:isOn()
+    _G._bt_auto_sleep_disabled_bluetooth = was_on
+    if was_on then
+        logger.info("BT Plugin: Auto disabling Bluetooth for suspend")
+        self:setBluetoothState(false, false)
+    end
+end
+
+function BluetoothController:onResume()
+    if not self:isAutoBluetoothSleepToggleEnabled() or not _G._bt_auto_sleep_disabled_bluetooth then
+        return
+    end
+
+    _G._bt_auto_sleep_disabled_bluetooth = false
+    logger.info("BT Plugin: Auto enabling Bluetooth after resume")
+    UIManager:scheduleIn(1, function()
+        local controller = _G._bt_controller_instance or self
+        if controller and controller:isAutoBluetoothSleepToggleEnabled() then
+            controller:setBluetoothState(true, false)
+        end
+    end)
 end
 
 function BluetoothController:onDispatcherRegisterActions()
@@ -1725,6 +1766,17 @@ function BluetoothController:addToMainMenu(menu_items)
                 callback = function(touchmenu_instance)
                     touchmenu_instance:updateItems()
                     self:onToggleBluetooth()
+                end,
+            },
+            {
+                text = _("睡眠/唤醒自动开关蓝牙"),
+                keep_menu_open = true,
+                checked_func = function()
+                    return self:isAutoBluetoothSleepToggleEnabled()
+                end,
+                callback = function(touchmenu_instance)
+                    self:setAutoBluetoothSleepToggle(not self:isAutoBluetoothSleepToggleEnabled())
+                    touchmenu_instance:updateItems()
                 end,
             },
             {

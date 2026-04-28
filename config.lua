@@ -3,6 +3,9 @@ return {
     -- 默认设备路径
     device_path = "/dev/input/event2",
 
+    -- 睡眠时自动关闭蓝牙，唤醒时自动恢复
+    auto_toggle_bluetooth_on_sleep = false,
+
     -- 默认按键映射
     key_map = {
         [103] = "pre_page",

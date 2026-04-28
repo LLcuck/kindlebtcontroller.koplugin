@@ -7,6 +7,7 @@ A KOReader plugin that enables Bluetooth game controllers / remote controllers t
 ### Features
 
 - **Bluetooth Control** — Toggle Bluetooth on/off directly from KOReader menu
+- **Sleep/Wake Bluetooth Automation** — Optionally disable Bluetooth before sleep and restore it after wake
 - **Fully Customizable Key Mapping** — Map any controller button or joystick axis to 20+ actions
 - **Multi-Action Support** — Bind multiple actions to a single button press
 - **Key Tester** — Real-time detection of controller button codes with instant mapping
@@ -234,6 +235,7 @@ After installation, find "Bluetooth Controller" in the KOReader menu under Tools
 #### Menu Options
 
 - **Bluetooth Toggle** — Toggle Bluetooth on/off
+- **Auto Toggle Bluetooth on Sleep/Wake** — Disable Bluetooth before sleep and restore it after wake
 - **Current Device** — Shows the device currently used to control Kindle
 - **Paired Bluetooth Devices** — Shows paired devices and device details
 - **Reload Device** — Manually reload the Bluetooth input device
